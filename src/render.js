@@ -37,8 +37,7 @@ function renderPostAndFeeds(state) {
   const f = document.querySelector('.feeds');
   f.innerHTML = htmlFeeds;
 }
-function fn1(data, state) {
-  console.log(data);
+function setState(data, state) {
   const postsDoc = data.querySelectorAll('item');
   const feedTitle = data.querySelector('title');
   const feedDescrip = data.querySelector('description');
@@ -58,8 +57,7 @@ function fn1(data, state) {
 }
 function parseXML(data) {
   const parser = new DOMParser();
-  const document = parser.parseFromString(data, 'application/xml');
-
+  return parser.parseFromString(data, 'application/xml');
 }
 export default function (url, state, i18nextInstance) {
   const feedback = document.querySelector('.feedback');
@@ -74,7 +72,8 @@ export default function (url, state, i18nextInstance) {
         feedback.textContent = i18nextInstance.t('error');
         return;
       }
-      parseXML(response.data.contents, state);
+      return parseXML(response.data.contents, state);
     })
+    .then((document) => setState(document, state))
     .catch((err) => console.error(err.message));
 }
