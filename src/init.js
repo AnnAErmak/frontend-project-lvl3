@@ -1,5 +1,5 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import * as yup from 'yup';
+import i18next from 'i18next';
+import render from './render.js';
 
 const init = () => {
   const state = {
@@ -7,20 +7,34 @@ const init = () => {
       isValid: false,
       errors: [],
     },
-    listsFeeds: [],
+    feeds: [],
+    posts: [],
   };
+
+  i18next
+    .init({
+      lng: 'ru',
+      debug: true,
+      resources: {
+        ru: {
+          translation: {
+            error: 'Ресурс не содержит валидный RSS',
+            errorDel: 'RSS уже существует',
+            errorURL: 'Ссылка должна быть валидным URL',
+            sucsses: 'RSS успешно загружен',
+          },
+        },
+      },
+    })
+    .then((t) => { t('key'); });
+
   const form = document.querySelector('form');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const { url } = form.elements;
-    // eslint-disable-next-line no-use-before-define
-    isValid(url.value, state);
+    render(url.value, state, i18next);
   });
 };
-function isValid(url, state) {
-  const urlSchema = yup.string().min(1).url();
-  console.log(urlSchema.isValidSync(url));
-  console.log(state.listsFeeds.includes(url));
-}
+
 export default init;
